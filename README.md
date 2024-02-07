@@ -1,2 +1,2 @@
 # pitchfork
-emulating stellar oscillation frequencies using a branching neural network architecture
+*emulating stellar oscillation frequencies using a branching neural network*
