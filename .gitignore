@@ -1,0 +1,9 @@
+/logs
+/models
+/data
+restricted_grid/logs
+restricted_grid/data
+restricted_grid/models
+restricted_grid/custom_loss/logs
+restricted_grid/custom_loss/data
+restricted_grid/custom_loss/models
