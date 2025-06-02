@@ -44,10 +44,10 @@ We use the set aside test data from the training set to test the emulator's prec
 
 Feast your eyes on some pretty plots that show *pitchfork*'s precision varies across the trained parameter space in the HR domain:
 
-![classical_dists_bg](figs/classical_dists_bg.png)
+![classical_unc_bg](figs/classical_unc_bg.png)
 pitchfork *prediction precision for the classical observables.* ***Top:*** *hexbin plot showing mean percentage error averaged across the classical observables over the HR-diagram.* ***Bottom:*** *distributions of test set residuals for each classical observable.*
 
-![astero_dists_bg](figs/astero_dists_bg.png)
+![astero_unc_bg](figs/astero_unc_bg.png)
 pitchfork *prediction precision for the asteroseismic observables.* ***Top:*** *hexbin plot showing mean percentage error averaged across all individual mode frequencies (radial orders $(6\leq n\leq40)$) over the HR-diagram.* ***Bottom:*** *distributions of test set residuals on each individual mode frequency, with radial order indicated in the top right.*
 
 For each of the outputs, we take the median absolute deviation of the residual distribution over the test set as the quoted "precision" of *pitchfork*. While the plots above demonstrate the *pitchfork* prediction precision remains fairly consistent over the HR diagram, we do note that these quoted precisions are summary statistics only, and not valid on a point-by-point basis - this is something we aim to fix in future work :)
@@ -56,9 +56,9 @@ If you're interested, here's a table of *pitchfork* prediction precision metrics
 
 | Parameter | $\sigma$ | $\sigma_\text{per cent}$ |
 | --------- | -------- | ------------------------ |
-| \Teff | $5.893 \text{K}$ | $0.059$ |
-| \Lum | $0.014 \text{L}_{\odot}$ | $0.213$ |
-| \FeH | $0.001 \text{dex}$ | $0.578$ |
+| **Teff** | $5.893 \text{K}$ | $0.059$ |
+| **L** | $0.014 \text{L}_{\odot}$ | $0.213$ |
+| **Fe/H** | $0.001 \text{dex}$ | $0.578$ |
 | $\nu_{n=6}$ | $0.316 \mu\text{Hz}$ | $0.035$ |
 | $\nu_{n=7}$ | $0.368 \mu\text{Hz}$ | $0.036$ |
 | $\nu_{n=8}$ | $0.381 \mu\text{Hz}$ | $0.032$ |
