@@ -22,15 +22,32 @@ Let's take a look at the data used to train *pitchfork*.
 
 We use the grid of solar-like oscillators described in Lyttle et al. 2021[^Lyttle_2021], which I recommend checking out if you want more details. In fact, I recommend checking it out in general - it's a great paper!
 
-[^Lyttle_2021]: Lyttle, Alexander J., et al. “Hierarchically Modelling Kepler Dwarfs and Subgiants to Improve Inference of Stellar Properties with Asteroseismology.” \mnras, vol. 505, no. 2, Aug. 2021, pp. 2427–46, https://doi.org/10.1093/mnras/stab1368.
+[^Lyttle_2021]: Lyttle, A., Davies, G., Li, T., Carboneau, L., Leung, H.H., Westwood, H., Chaplin, W., Hall, O., Huber, D., Nielsen, M., Basu, S., and García, R. 2021. Hierarchically modelling Kepler dwarfs and subgiants to improve inference of stellar properties with asteroseismology. \mnras, 505(2), p.2427-2446.
 
-Without going into too much detail, the stellar models were generated using MESA **REF**, and the asteroseismic terms were generated with GYRE **REF**.
+Without going into too much detail, the stellar models were generated using MESA[^Paxton_2011][^Paxton_2013][^Paxton_2015][^Paxton_2018][^Paxton_2019][^Jermyn_2023] (version 12115), and the asteroseismic terms were generated with GYRE[^Townsend_2013] (version 5.1).
 
-This means we supply inputs (stellar fundamental properties) of **M, T, Zini, Yini, and MLT** and end up with outputs (observables) **L, Fe/H, Teff** (the *classical* obserables), and a host of individual radial modes of radial orders **$6<n<40$** (the *classical* observables) for each of these models.
+[^Paxton_2011]: Paxton, B., Bildsten, L., Dotter, A., Herwig, F., Lesaffre, P., and Timmes, F. 2011. Modules for Experiments in Stellar Astrophysics (MESA). \apjs, 192(1), p.3.
+
+
+[^Paxton_2013]: Paxton, B., Cantiello, M., Arras, P., Bildsten, L., Brown, E., Dotter, A., Mankovich, C., Montgomery, M., Stello, D., Timmes, F., and Townsend, R. 2013. Modules for Experiments in Stellar Astrophysics (MESA): Planets, Oscillations, Rotation, and Massive Stars. \apjs, 208(1), p.4.
+
+
+[^Paxton_2015]: Paxton, B., Marchant, P., Schwab, J., Bauer, E., Bildsten, L., Cantiello, M., Dessart, L., Farmer, R., Hu, H., Langer, N., Townsend, R., Townsley, D., and Timmes, F. 2015. Modules for Experiments in Stellar Astrophysics (MESA): Binaries, Pulsations, and Explosions. \apjs, 220(1), p.15.
+
+
+[^Paxton_2018]: Paxton, B., Schwab, J., Bauer, E., Bildsten, L., Blinnikov, S., Duffell, P., Farmer, R., Goldberg, J., Marchant, P., Sorokina, E., Thoul, A., Townsend, R., and Timmes, F. 2018. Modules for Experiments in Stellar Astrophysics (MESA): Convective Boundaries, Element Diffusion, and Massive Star Explosions. \apjs, 234(2), p.34.
+
+[^Paxton_2019]: Paxton, B., Smolec, R., Schwab, J., Gautschy, A., Bildsten, L., Cantiello, M., Dotter, A., Farmer, R., Goldberg, J., Jermyn, A., Kanbur, S., Marchant, P., Thoul, A., Townsend, R., Wolf, W., Zhang, M., and Timmes, F. 2019. Modules for Experiments in Stellar Astrophysics (MESA): Pulsating Variable Stars, Rotation, Convective Boundaries, and Energy Conservation. \apjs, 243(1), p.10.
+
+[^Jermyn_2023]: Jermyn, A., Bauer, E., Schwab, J., Farmer, R., Ball, W., Bellinger, E., Dotter, A., Joyce, M., Marchant, P., Mombarg, J., Wolf, W., Sunny Wong, T., Cinquegrana, G., Farrell, E., Smolec, R., Thoul, A., Cantiello, M., Herwig, F., Toloza, O., Bildsten, L., Townsend, R., and Timmes, F. 2023. Modules for Experiments in Stellar Astrophysics (MESA): Time-dependent Convection, Energy Conservation, Automatic Differentiation, and Infrastructure. \apjs, 265(1), p.15.
+
+[^Townsend_2013]: Townsend, R., and Teitler, S. 2013. GYRE: an open-source stellar oscillation code based on a new Magnus Multiple Shooting scheme. \mnras, 435(4), p.3406-3418.
+
+This means we supply inputs (stellar fundamental properties) of **M, T, Zini, Yini, and MLT** and end up with outputs (observables) **L, Fe/H, Teff** (the *classical* obserables), and a host of individual radial modes of radial orders **$6<n<40$** (the *asteroseismic* observables) for each of these models.
 
 Because we are trying to emulate the behaviour of the stellar evolution codes, we use these inputs and outputs for *pitchfork* too.
 
-The grid contains **X** tracks for a total of **X** stellar models, for which we set aside 5% for both the testing and validation sets.
+The grid contains 5388 tracks for a total of 2448681 stellar models, for which we set aside 5% for both the testing and validation sets.
 
 A summary plot of the input distributions is shown below:
 
