@@ -12,13 +12,29 @@ jax.config.update('jax_default_device', jax.devices('cpu')[0])
 import json
 import pickle
 
+from .utils import beta_prior, uniform_prior
+
 class pitchfork_sampler():
-    def __init__(self, priors, pitchfork, pitchfork_cov, logl_scale=1):
-        self.priors = priors
+    def __init__(self, pitchfork, pitchfork_cov, priors=None, logl_scale=1):
         self.pitchfork = pitchfork
         self.pitchfork_cov = pitchfork_cov
         self.logl_scale = logl_scale
 
+        if not priors:
+            mass_prior = beta_prior(0.8, 1.2, a=5, b=2)
+            Zinit_prior = beta_prior(0.004, 0.038, a=2, b=5)
+            Yinit_prior = beta_prior(0.24, 0.32, a=2, b=5)
+            MLT_prior = beta_prior(1.7, 2.5, a=1.2, b=1.2)
+            age_prior = beta_prior(0.03, 14, a=1.2, b=1.2)
+            a_prior = uniform_prior(-10, 2)
+            b_prior = uniform_prior(4.4, 5.25)
+            
+            self.priors = [mass_prior, Zinit_prior, Yinit_prior, MLT_prior, age_prior, a_prior, b_prior]
+
+        else:
+            self.priors = priors
+            
+        
     def load_star_data(self, star_name, gp_var = 4, gp_ls_factor = 7):
         star_data_filepath = f'stars/{star_name}/{star_name}.json'
         

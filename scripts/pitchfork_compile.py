@@ -14,7 +14,7 @@ receive outputs in expected dimensions too!
 # =======================
 # class to compile pitchfork
 # =======================
-class compile_pitchfork():
+class pitchfork_compile():
     def __init__(self, model_dict, model_info):
         """
         class to compile pitchfork using compile_from_dict and known pre- and post-
