@@ -11,8 +11,16 @@ jax.config.update('jax_default_device', jax.devices('cpu')[0])
 
 import json
 import pickle
+import time
 
 from .utils import beta_prior, uniform_prior
+
+import warnings
+
+warnings.filterwarnings("ignore", message="overflow encountered in exp", category=RuntimeWarning, module="scripts")
+
+warnings.filterwarnings("ignore", message="Sampling from region seems inefficient", category=UserWarning, module="ultranest")
+
 
 class pitchfork_sampler():
     def __init__(self, pitchfork, pitchfork_cov, priors=None, logl_scale=1):
@@ -38,12 +46,31 @@ class pitchfork_sampler():
     def load_star_data(self, star_name, gp_var = 4, gp_ls_factor = 7):
         star_data_filepath = f'stars/{star_name}/{star_name}.json'
         
+        with open(star_data_filepath, 'r') as fp:
+            star_dict = json.load(fp)
+
+        # -----------------------
+        # check for [None, None] in freqs and pop
+        # -----------------------
+        for n in range(6,41):
+            try:
+                freq_value = star_dict[f'nu_0_{n}'][0]
+                freq_unc = star_dict[f'nu_0_{n}'][1]
+                
+                if freq_value == None or freq_unc == None:
+                    print(f'[pitchfork_sampler] popping freq with key "nu_0_{n}" because of NaN entry...')
+                    print(f'    continuing, but please check that your modes in "stars/{star_name}/{star_name}.json" contain')
+                    print(f'    consecutive entries from n_min to n_max - if missing mode, in this range, leave entry but')
+                    print(f'    and high uncertainty to nullify impact on likelihood.')
+                    star_dict.pop([f'nu_0_{n}'])
+                    
+            except:
+                pass
+
+        
         # -----------------------
         # compute covariance matrix
         # -----------------------
-        with open(star_data_filepath, 'r') as fp:
-            star_dict = json.load(fp)
-        
         ## unpacking dict
         def unpack_star_dict(star_dict, keys):
             values = [star_dict[key][0] for key in keys]
@@ -113,9 +140,12 @@ class pitchfork_sampler():
 
         return self.logl_scale * ll
 
-    def __call__(self, star_name, ndraw_min=2**15, ndraw_max=2**15, draw_multiple=True, save=False, **run_kwargs):
-        
+    def __call__(self, star_name, ndraw_min=1024, ndraw_max=524288, draw_multiple=True, save_as=None, **run_kwargs):
+        print(f'[pitchfork_sampler] sampling posterior of {star_name}...')
+
         self.load_star_data(star_name)
+
+        sampler_start_time = time.perf_counter()
         
         self.sampler = ultranest.ReactiveNestedSampler(['initial_mass', 'initial_Zinit', 'initial_Yinit', 'initial_MLT', 'star_age','a','b'], 
                                                        self.logl, 
@@ -128,10 +158,19 @@ class pitchfork_sampler():
         
         results = self.sampler.run(**run_kwargs)
 
+        self.sampler_elapsed_time = time.perf_counter() - sampler_start_time
+
+        results['elapsed_time'] = self.sampler_elapsed_time
         results['priors'] = self.priors
+
+        if self.sampler_elapsed_time < 60:
+            print(f'[pitchfork_sampler] finished in {self.sampler_elapsed_time:.1f}s!')
+        else:
+            mins, secs = divmod(self.sampler_elapsed_time, 60)
+            print(f'[pitchfork_sampler] finished in {int(mins)}m {secs:.1f}s!')
         
-        if save:
-            with open(f'stars/{star_name}/{star_name}_results.pkl', 'wb') as fp:
+        if save_as:
+            with open(f'stars/{star_name}/{save_as}', 'wb') as fp:
                 pickle.dump(results, fp, protocol=pickle.HIGHEST_PROTOCOL)
         
         return results
