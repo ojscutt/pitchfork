@@ -1,5 +1,6 @@
 import numpy as np
 import ultranest
+from scipy.linalg import cholesky, solve_triangular
 
 import tinygp
 from tinygp import GaussianProcess
@@ -43,7 +44,7 @@ class pitchfork_sampler():
             self.priors = priors
             
         
-    def load_star_data(self, star_name, gp_var = 4, gp_ls_factor = 7):
+    def load_star_data(self, star_name, gp_var=4, gp_ls_factor=7):
         star_data_filepath = f'stars/{star_name}/{star_name}.json'
         
         with open(star_data_filepath, 'r') as fp:
@@ -111,11 +112,21 @@ class pitchfork_sampler():
         sigma = sigma_obs + sigma_psi + sigma_gp
         ###------------------------------------------------
 
-        _, log_sigma_det = np.linalg.slogdet(sigma)
+        ###------------- cholesky ----------------------
+
+        self.sigma_L = cholesky(sigma, lower=True, check_finite=False)
+
+        sigma_det = (np.diag(self.sigma_L).prod())**2
+
+        log_sigma_det = np.log(sigma_det)
+
+        self.logl_factor = -(len(self.obs_vals)*0.5*np.log(2*np.pi))-(0.5*log_sigma_det)
+
+        # _, log_sigma_det = np.linalg.slogdet(sigma)
         
-        self.logl_constant = -(len(self.obs_vals)*0.5*np.log(2*np.pi))-(0.5*log_sigma_det)   
-        self.sigma_inv = np.linalg.inv(sigma)
-        self.matmul_path = np.einsum_path('ij, jk, ik->i', np.array(self.obs_vals).reshape(-1,1), self.sigma_inv, np.array(self.obs_vals).reshape(-1,1), optimize='optimal')[0]
+        # self.logl_constant = -(len(self.obs_vals)*0.5*np.log(2*np.pi))-(0.5*log_sigma_det)   
+        # self.sigma_inv = np.linalg.inv(sigma)
+        # self.matmul_path = np.einsum_path('ij, jk, ik->i', np.array(self.obs_vals).reshape(-1,1), self.sigma_inv, np.array(self.obs_vals).reshape(-1,1), optimize='optimal')[0]
 
     def ptform(self, u):
         theta = np.array([self.priors[i].ppf(u[:,i]) for i in range(len(self.priors))]).T
@@ -136,14 +147,24 @@ class pitchfork_sampler():
 
         residual_matrix = np.array(preds - self.obs_vals)
 
-        ll = self.logl_constant-0.5*np.einsum('ij, jk, ik->i', residual_matrix, self.sigma_inv, residual_matrix, optimize=self.matmul_path)
+
+        Linv_r = solve_triangular(self.sigma_L, residual_matrix.T, lower=True, check_finite=False)
+
+        rT_sigmainv_r = np.sum(Linv_r**2, axis=0)
+
+        ll = self.logl_factor - 0.5*rT_sigmainv_r
+
+        #ll = self.logl_constant-0.5*np.einsum('ij, jk, ik->i', residual_matrix, self.sigma_inv, residual_matrix, optimize=self.matmul_path)
 
         return self.logl_scale * ll
 
-    def __call__(self, star_name, ndraw_min=1024, ndraw_max=524288, draw_multiple=True, save_as=None, **run_kwargs):
-        print(f'[pitchfork_sampler] sampling posterior of {star_name}...')
+    def __call__(self, star_name, gp_var=4, gp_ls_factor=7, ndraw_min=1024, ndraw_max=524288, draw_multiple=True, save_as=None, **run_kwargs):
+        print(f'[pitchfork_sampler] sampling posterior of {star_name}!')
+        print(f'[pitchfork_sampler] GP params: gp_var={gp_var}, gp_ls_factor={gp_ls_factor}')
 
-        self.load_star_data(star_name)
+        self.load_star_data(star_name, gp_var=gp_var, gp_ls_factor=gp_ls_factor)
+
+        print(f'[pitchfork_sampler] Considering freqs in range: {self.n_min} ≤ n ≤ {self.n_max}')
 
         sampler_start_time = time.perf_counter()
         

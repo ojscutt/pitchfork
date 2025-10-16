@@ -21,7 +21,7 @@ def beta_prior(prior_min, prior_max, a=1, b=1):
 
 ## plotting funcs
 
-def posterior_plot(results, star_name=None, color = '#DC322F', include_prior = False, n_prior_samples = 10000):
+def posterior_plot(results, star_name=None, color = '#D33682', include_prior = False, n_prior_samples = 10000):
     
     labels = ['initial_mass', 'initial_Zinit', 'initial_Yinit', 'initial_MLT', 'star_age', 'a', 'b']
     
