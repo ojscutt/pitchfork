@@ -37,7 +37,7 @@ class pitchfork_compile():
         self.R_sun = 6.957e+8
         self.SB_sigma = 5.670374419e-8
 
-    def predict(self, inputs, n_min=5, n_max=40):
+    def predict(self, inputs, n_min=6, n_max=40):
         ## indexing for radial order slice according to n_min and n_max
         n_slice_index = np.r_[0, 1, 2, np.arange(n_min-3, n_max-2)]
         
