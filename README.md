@@ -22,6 +22,11 @@ With the notebooks here, you should be able to go from stellar observables to fu
 If `pitchfork` is useful to your work, please cite the supporting publication found here:
 - !INSERT PAPER LINK WHEN PUBLISHED!
 
+## requirements:
+- [`UltraNest`](https://github.com/JohannesBuchner/UltraNest), and dependencies
+- [`tinygp`](https://github.com/dfm/tinygp), and dependencies
+- [`scipy`](https://github.com/scipy/scipy), and dependencies
+
 ## map of the repo:
 ```
 ├── README.md
