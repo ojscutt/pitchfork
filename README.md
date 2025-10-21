@@ -1,15 +1,49 @@
 # pitchfork
-*rapid emulation of individual radial modes of solar like oscillators using a branching neural network*
+*inferring fundamental properties of solar-like oscillators using a branching neural network emulator of a grid of stellar models*
 ---
 Accurately measuring the ages and internal structures of stars is tough!
 
 We can use individual asteroseismic modes of oscillation to improve precision, but typically this comes at a hefty computational cost when interpolating grids to high dimenstions.
 
-In this repo we present *pitchfork* - a branching multilayer perceptron capable of rapidly emulating the indivudual radial modes of a grid of solar-like oscillators.
+In this repo we present `pitchfork` - a branching multilayer perceptron capable of rapidly emulating the indivudual radial modes of a grid of solar-like oscillators.
 
-For the remainder of this README, I'll briefly present the relevant info regarding the training data for pitchfork and our prediction accuracy on a test set.
+We also show examples of how we can use `pitchfork` as a rapid and efficient likelihood estimator during Bayesian inference of stellar fundamental properties.
 
-Then, we can take a look at the `inference-example.ipynb` notebook to go over our process of stellar parameter inference.
+The repo is laid out as follows:
+
+```
+├── README.md
+├── 0-make-star-dict.ipynb # learn how to load in data in a pitchfork-friendly way
+├── 1-simple-inference.ipynb # learn how to run simple inference on the Sun
+├── 2-custom-inference.ipynb # learn how to customise inference for your own stars
+├── 3-using-pitchfork.ipynb # bonus stuff that pitchfork can do!
+├── figs
+│ └── ... # figures used in .md files
+├── pitchfork
+│ ├── pitchfork_info.md # further information on pitchfork for nerds
+│ ├── pitchfork.json # dict of network weights, biases, and hyperparams saved using wtf
+│ ├── pitchfork_covariance.txt # covariance matrix of neural network residuals used in likelihood
+│ └── pitchfork_info.json # pitchork trained range and custom layer info that isn't stored in wtf dict
+├── scripts
+│ ├── ___init___.py
+│ ├── compile_from_dict.py # wtf dict compilation
+│ ├── pitchfork_compile.py # fully compile pitchfork with custom layers
+│ ├── pitchfork_sampler.py # initialise sampler
+│ └── utils.py # useful functions, mostly for plotting
+├── stars
+│ ├── 16CygA
+│ │ └── 16CygA.json # star info
+│ ├── 16CygB
+│ │ └── 16CygB.json # "" ""
+│ ├── Sun
+│ │ └── Sun.json # "" ""
+│ └── TEMPLATE
+│   └── TEMPLATE.json # template star dict - do not edit!
+├── LICENSE
+└── .gitignore
+```
+
+With the notebooks here, you should be able to go from stellar observables to fully marginalised, well-sampled posteriors of solar-like oscillators in minutes with just your laptop :)
 
 Hope you enjoy!
 
